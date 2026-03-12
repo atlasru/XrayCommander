@@ -302,7 +302,7 @@ func (s *Service) GetInstallCommand() string {
 	}
 
 	return fmt.Sprintf(
-		"curl -L -o /tmp/xray.zip "https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-%s.zip" && "+
+		"curl -L -o /tmp/xray.zip \"https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-%s.zip\" && "+
 		"unzip -o /tmp/xray.zip -d /tmp/xray && "+
 		"sudo mv /tmp/xray/xray /usr/local/bin/ && "+
 		"sudo chmod +x /usr/local/bin/xray && "+
