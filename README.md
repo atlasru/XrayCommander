@@ -148,3 +148,4 @@ MIT License - see LICENSE file for details.
 - [Bubble Tea](https://github.com/charmbracelet/bubbletea) - TUI framework
 - [Xray-core](https://github.com/XTLS/Xray-core) - Proxy core
 - [Lipgloss](https://github.com/charmbracelet/lipgloss) - Styling library
+
