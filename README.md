@@ -2,7 +2,7 @@
 
 A modern Terminal User Interface (TUI) application for managing Xray VLESS proxy connections. Built with Go and Bubble Tea.
 
-![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go)
+![Go](https://img.shields.io/badge/Go-1.19+-00ADD8?logo=go)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## Features
@@ -18,7 +18,7 @@ A modern Terminal User Interface (TUI) application for managing Xray VLESS proxy
 
 ### Prerequisites
 
-- Go 1.21 or higher
+- Go 1.19 or higher
 - Xray-core binary (will be prompted to install if not found)
 
 ### From Source
@@ -28,11 +28,11 @@ A modern Terminal User Interface (TUI) application for managing Xray VLESS proxy
 git clone https://github.com/atlasru/xraycommander.git
 cd xraycommander
 
+# Download dependencies
+go mod tidy
+
 # Build the application
 go build -o xraycommander ./cmd/xraycommander
-
-# Or use the build script
-./build.sh
 ```
 
 ### Install to System (Optional)

@@ -2,7 +2,7 @@ package tui
 
 import (
 	"fmt"
-	"strings"
+	"time"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
@@ -423,7 +423,7 @@ func (m Model) renderHelp() string {
 type tickMsg struct{}
 
 func tickCmd() tea.Cmd {
-	return tea.Tick(1, func(t interface{}) tea.Msg {
+	return tea.Tick(time.Second, func(t time.Time) tea.Msg {
 		return tickMsg{}
 	})
 }

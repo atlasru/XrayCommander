@@ -4,21 +4,17 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/charmbracelet/lipgloss"
 	"github.com/atlasru/xraycommander/internal/xray"
+	"github.com/atlasru/xraycommander/pkg/models"
 )
 
 // viewMain renders the main dashboard
 func (m Model) viewMain() string {
 	var b strings.Builder
 
-	// Title
 	b.WriteString(m.styles.TitleStyle.Render("XrayCommander"))
-	b.WriteString("
+	b.WriteString("\n\n")
 
-")
-
-	// Status card
 	status := m.xrayService.GetStatus()
 
 	var statusCard string
@@ -29,14 +25,10 @@ func (m Model) viewMain() string {
 	}
 
 	b.WriteString(m.styles.BorderStyle.Render(statusCard))
-	b.WriteString("
+	b.WriteString("\n\n")
 
-")
-
-	// Quick actions
 	b.WriteString(m.styles.HeaderStyle.Render("Quick Actions"))
-	b.WriteString("
-")
+	b.WriteString("\n")
 
 	actions := []string{
 		"[Ctrl+O] Start Connection",
@@ -48,17 +40,13 @@ func (m Model) viewMain() string {
 	}
 
 	for _, action := range actions {
-		b.WriteString(fmt.Sprintf("  %s
-", m.styles.NormalStyle.Render(action)))
+		b.WriteString(fmt.Sprintf("  %s\n", m.styles.NormalStyle.Render(action)))
 	}
 
-	// Recent profiles
 	if len(m.profiles) > 0 {
-		b.WriteString("
-")
+		b.WriteString("\n")
 		b.WriteString(m.styles.HeaderStyle.Render("Recent Profiles"))
-		b.WriteString("
-")
+		b.WriteString("\n")
 
 		for i, profile := range m.profiles {
 			if i >= 5 {
@@ -70,8 +58,7 @@ func (m Model) viewMain() string {
 				marker = m.styles.ConnectedStyle.Render("→ ")
 			}
 
-			b.WriteString(fmt.Sprintf("%s%s (%s:%d)
-", 
+			b.WriteString(fmt.Sprintf("%s%s (%s:%d)\n", 
 				marker,
 				m.styles.NormalStyle.Render(profile.Name),
 				profile.Address, 
@@ -82,45 +69,35 @@ func (m Model) viewMain() string {
 	return b.String()
 }
 
-func (m Model) renderConnectedCard(status xray.ConnectionStatus) string {
+func (m Model) renderConnectedCard(status models.ConnectionStatus) string {
 	var b strings.Builder
 
 	b.WriteString(m.styles.ConnectedStyle.Render("● CONNECTED"))
-	b.WriteString("
-
-")
+	b.WriteString("\n\n")
 
 	if status.CurrentProfile != nil {
-		b.WriteString(fmt.Sprintf("Profile: %s
-", m.styles.ValueStyle.Render(status.CurrentProfile.Name)))
-		b.WriteString(fmt.Sprintf("Server: %s:%d
-", 
+		b.WriteString(fmt.Sprintf("Profile: %s\n", m.styles.ValueStyle.Render(status.CurrentProfile.Name)))
+		b.WriteString(fmt.Sprintf("Server: %s:%d\n", 
 			status.CurrentProfile.Address, 
 			status.CurrentProfile.Port))
 	}
 
-	b.WriteString(fmt.Sprintf("Upload: %s (Total: %s)
-", 
+	b.WriteString(fmt.Sprintf("Upload: %s (Total: %s)\n", 
 		xray.FormatSpeed(status.UploadSpeed),
 		xray.FormatBytes(status.TotalUpload)))
-	b.WriteString(fmt.Sprintf("Download: %s (Total: %s)
-",
+	b.WriteString(fmt.Sprintf("Download: %s (Total: %s)\n",
 		xray.FormatSpeed(status.DownloadSpeed),
 		xray.FormatBytes(status.TotalDownload)))
 
 	if status.Latency > 0 {
-		b.WriteString(fmt.Sprintf("Latency: %d ms
-", status.Latency))
+		b.WriteString(fmt.Sprintf("Latency: %d ms\n", status.Latency))
 	}
 
 	return b.String()
 }
 
 func (m Model) renderDisconnectedCard() string {
-	return fmt.Sprintf("%s
-
-%s
-%s",
+	return fmt.Sprintf("%s\n\n%s\n%s",
 		m.styles.DisconnectedStyle.Render("○ DISCONNECTED"),
 		"Xray service is not running.",
 		"Select a profile and press Ctrl+O to connect.")
@@ -131,20 +108,15 @@ func (m Model) viewProfileList() string {
 	var b strings.Builder
 
 	b.WriteString(m.styles.TitleStyle.Render("Profile Management"))
-	b.WriteString("
-
-")
+	b.WriteString("\n\n")
 
 	if len(m.profiles) == 0 {
 		b.WriteString(m.styles.WarningStyle.Render("No profiles found."))
-		b.WriteString("
-
-")
+		b.WriteString("\n\n")
 		b.WriteString("Press [N] to create a new profile or [Ctrl+Q] to go back.")
 		return b.String()
 	}
 
-	// Profile table
 	rows := make([][]string, len(m.profiles))
 	for i, profile := range m.profiles {
 		security := profile.Security
@@ -161,12 +133,9 @@ func (m Model) viewProfileList() string {
 		}
 	}
 
-	// Render table manually
-	b.WriteString(fmt.Sprintf("%-4s %-20s %-25s %-10s %-10s
-", "#", "Name", "Server", "Network", "Security"))
+	b.WriteString(fmt.Sprintf("%-4s %-20s %-25s %-10s %-10s\n", "#", "Name", "Server", "Network", "Security"))
 	b.WriteString(strings.Repeat("─", 75))
-	b.WriteString("
-")
+	b.WriteString("\n")
 
 	for i, row := range rows {
 		line := fmt.Sprintf("%-4s %-20s %-25s %-10s %-10s", row[0], row[1], row[2], row[3], row[4])
@@ -175,12 +144,10 @@ func (m Model) viewProfileList() string {
 		} else {
 			line = m.styles.NormalStyle.Render(line)
 		}
-		b.WriteString(line + "
-")
+		b.WriteString(line + "\n")
 	}
 
-	b.WriteString("
-")
+	b.WriteString("\n")
 	b.WriteString("[Enter] Connect/Edit  [N] New  [E] Edit  [D] Delete  [T] Test  [Esc] Back")
 
 	return b.String()
@@ -195,9 +162,7 @@ func (m Model) viewProfileForm() string {
 	} else {
 		b.WriteString(m.styles.TitleStyle.Render("Edit Profile"))
 	}
-	b.WriteString("
-
-")
+	b.WriteString("\n\n")
 
 	labels := []string{
 		"Name:        ",
@@ -223,13 +188,11 @@ func (m Model) viewProfileForm() string {
 				value = m.styles.SelectedStyle.Render(value)
 			}
 
-			b.WriteString(fmt.Sprintf("%s%s
-", label, value))
+			b.WriteString(fmt.Sprintf("%s%s\n", label, value))
 		}
 	}
 
-	b.WriteString("
-")
+	b.WriteString("\n")
 	b.WriteString("[Tab] Next Field  [Shift+Tab] Prev  [Ctrl+S] Save  [Esc] Cancel")
 
 	return b.String()
@@ -240,15 +203,12 @@ func (m Model) viewLogs() string {
 	var b strings.Builder
 
 	b.WriteString(m.styles.TitleStyle.Render("Xray Logs"))
-	b.WriteString("
-
-")
+	b.WriteString("\n\n")
 
 	logs := m.xrayService.GetLogs()
 	if len(logs) == 0 {
 		b.WriteString(m.styles.NormalStyle.Render("No logs available. Start Xray to see logs."))
 	} else {
-		// Show last 20 lines
 		start := 0
 		if len(logs) > 20 {
 			start = len(logs) - 20
@@ -256,7 +216,6 @@ func (m Model) viewLogs() string {
 
 		for i := start; i < len(logs); i++ {
 			line := logs[i]
-			// Colorize log levels
 			if strings.Contains(line, "ERROR") || strings.Contains(line, "error") {
 				line = m.styles.ErrorStyle.Render(line)
 			} else if strings.Contains(line, "WARN") || strings.Contains(line, "warning") {
@@ -264,13 +223,11 @@ func (m Model) viewLogs() string {
 			} else {
 				line = m.styles.NormalStyle.Render(line)
 			}
-			b.WriteString(line + "
-")
+			b.WriteString(line + "\n")
 		}
 	}
 
-	b.WriteString("
-")
+	b.WriteString("\n")
 	b.WriteString("[Esc] Back  [Ctrl+C] Clear")
 
 	return b.String()
@@ -281,19 +238,13 @@ func (m Model) viewConfirmDelete() string {
 	var b strings.Builder
 
 	b.WriteString(m.styles.TitleStyle.Render("Confirm Delete"))
-	b.WriteString("
-
-")
+	b.WriteString("\n\n")
 
 	if m.selectedIdx < len(m.profiles) {
 		profile := m.profiles[m.selectedIdx]
-		b.WriteString(fmt.Sprintf("Are you sure you want to delete profile '%s'?
-
-", 
+		b.WriteString(fmt.Sprintf("Are you sure you want to delete profile '%s'?\n\n", 
 			m.styles.WarningStyle.Render(profile.Name)))
-		b.WriteString(fmt.Sprintf("Server: %s:%d
-
-", profile.Address, profile.Port))
+		b.WriteString(fmt.Sprintf("Server: %s:%d\n\n", profile.Address, profile.Port))
 	}
 
 	b.WriteString("[Y] Yes, delete  [N] No, cancel")
@@ -306,39 +257,24 @@ func (m Model) viewXrayNotFound() string {
 	var b strings.Builder
 
 	b.WriteString(m.styles.TitleStyle.Render("Xray Not Found"))
-	b.WriteString("
-
-")
+	b.WriteString("\n\n")
 
 	b.WriteString(m.styles.WarningStyle.Render("Xray-core binary not found on your system."))
-	b.WriteString("
+	b.WriteString("\n\n")
 
-")
-
-	b.WriteString("XrayCommander requires Xray-core to function.
-")
-	b.WriteString("You can install it automatically or manually.
-
-")
+	b.WriteString("XrayCommander requires Xray-core to function.\n")
+	b.WriteString("You can install it automatically or manually.\n\n")
 
 	b.WriteString(m.styles.HeaderStyle.Render("Automatic Installation"))
-	b.WriteString("
-")
-	b.WriteString("Press [I] to install Xray-core automatically.
-")
-	b.WriteString("This will download and install the latest version.
-
-")
+	b.WriteString("\n")
+	b.WriteString("Press [I] to install Xray-core automatically.\n")
+	b.WriteString("This will download and install the latest version.\n\n")
 
 	b.WriteString(m.styles.HeaderStyle.Render("Manual Installation"))
-	b.WriteString("
-")
-	b.WriteString("Run the following command:
-")
+	b.WriteString("\n")
+	b.WriteString("Run the following command:\n")
 	b.WriteString(m.styles.NormalStyle.Render(m.xrayService.GetInstallCommand()))
-	b.WriteString("
-
-")
+	b.WriteString("\n\n")
 
 	b.WriteString("[I] Install  [Q] Quit")
 
